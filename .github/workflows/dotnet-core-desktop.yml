@@ -81,7 +81,7 @@ jobs:
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      working-directory: $env:ROOT_DIR
+      working-directory: ${{ env:ROOT_DIR }}
       run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
