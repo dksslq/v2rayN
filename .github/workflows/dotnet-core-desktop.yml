@@ -56,8 +56,9 @@ jobs:
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
 
     env:
+      ROOT_DIR: v2rayN
       Solution_Name: v2rayN.sln                  # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
+      # Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Wap_Project_Directory: v2rayN    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       Wap_Project_Path: v2rayN\v2rayN.csproj                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
       SigningCertificate: GitHubActionsWorkflow.pfx
@@ -80,28 +81,25 @@ jobs:
 
     # Execute all unit tests in the solution
     - name: Execute unit tests
-      working-directory: v2rayN
+      working-directory: $env:ROOT_DIR
       run: dotnet test
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
-      working-directory: v2rayN
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      run: msbuild $env:ROOT_DIR\$env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate
     - name: Decode the pfx
-      working-directory: v2rayN
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath $env:SigningCertificate
+        $certificatePath = Join-Path -Path $env:ROOT_DIR\$env:Wap_Project_Directory -ChildPath $env:ROOT_DIR\$env:Wap_Project_Directory\$env:SigningCertificate
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Create the app package
-      working-directory: v2rayN
-      run: msbuild $env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+      run: msbuild $env:ROOT_DIR\$env:Wap_Project_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=$env:ROOT_DIR\$env:Wap_Project_Directory\$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
       env:
         Appx_Bundle: Always
         Appx_Bundle_Platforms: x86|x64
@@ -110,12 +108,12 @@ jobs:
 
     # Remove the pfx
     - name: Remove the pfx
-      working-directory: v2rayN
-      run: Remove-Item -path $env:Wap_Project_Directory\$env:SigningCertificate
+      run: Remove-Item -path $env:ROOT_DIR\$env:Wap_Project_Directory\$env:SigningCertificate
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: MSIX Package
+        working-directory: $env:ROOT_DIR
         path: ${{ env.Wap_Project_Directory }}
