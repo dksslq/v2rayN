@@ -115,5 +115,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: MSIX Package
-        working-directory: ${{ env.ROOT_DIR }}
-        path: ${{ env.Wap_Project_Directory}}\bin\Release
+        path: ${{ env.ROOT_DIR }}\${{ env.Wap_Project_Directory}}\bin\Release
