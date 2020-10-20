@@ -60,6 +60,7 @@ jobs:
       Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Wap_Project_Directory: v2rayN    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       Wap_Project_Path: v2rayN\v2rayN.csproj                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+      SigningCertificate: GitHubActionsWorkflow.pfx
 
     steps:
     - name: Checkout
@@ -94,7 +95,7 @@ jobs:
       working-directory: v2rayN
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
-        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath GitHubActionsWorkflow.pfx
+        $certificatePath = Join-Path -Path $env:Wap_Project_Directory -ChildPath $env:SigningCertificate
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Create the app package by building and packaging the Windows Application Packaging project
@@ -110,7 +111,7 @@ jobs:
     # Remove the pfx
     - name: Remove the pfx
       working-directory: v2rayN
-      run: Remove-Item -path $env:Wap_Project_Directory\GitHubActionsWorkflow.pfx
+      run: Remove-Item -path $env:Wap_Project_Directory\$env:SigningCertificate
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-artifact
     - name: Upload build artifacts
