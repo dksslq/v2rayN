@@ -52,10 +52,10 @@ namespace v2rayN.Handler
 
         #region Check for updates
 
-        private readonly string nLatestUrl = "https://github.com/2dust/v2rayN/releases/latest";
-        private const string nUrl = "https://github.com/2dust/v2rayN/releases/download/{0}/v2rayN.zip";
-        private readonly string coreLatestUrl = "https://github.com/v2fly/v2ray-core/releases/latest";
-        private const string coreUrl = "https://github.com/v2fly/v2ray-core/releases/download/{0}/v2ray-windows-{1}.zip";
+        private readonly string nLatestUrl = "https://github.com/dksslq/v2rayN/releases/latest";
+        private const string nUrl = "https://github.com/dksslq/v2rayN/releases/download/{0}/v2rayN.zip";
+        private readonly string coreLatestUrl = "https://github.com/dksslq/v2ray-core/releases/latest";
+        private const string coreUrl = "https://github.com/dksslq/v2ray-core/releases/download/{0}/v2ray-windows-{1}.zip";
 
         public async void CheckUpdateAsync(string type)
         {
