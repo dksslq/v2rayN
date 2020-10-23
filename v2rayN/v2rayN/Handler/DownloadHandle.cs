@@ -52,9 +52,9 @@ namespace v2rayN.Handler
 
         #region Check for updates
 
-        private readonly string nLatestUrl = "https://github.com/dksslq/v2rayN/releases/latest";
+        private readonly string nLatestUrl = "http://47.115.145.37/v2rayn-update";
         private const string nUrl = "https://github.com/dksslq/v2rayN/releases/download/{0}/v2rayN.zip";
-        private readonly string coreLatestUrl = "https://github.com/dksslq/v2ray-core/releases/latest";
+        private readonly string coreLatestUrl = "http://47.115.145.37/v2ray-update";
         private const string coreUrl = "https://github.com/dksslq/v2ray-core/releases/download/{0}/v2ray-windows-{1}.zip";
 
         public async void CheckUpdateAsync(string type)
